@@ -1,0 +1,15 @@
+services:
+
+    request_data.normalizer.get_method:
+        class: 'Bilyiv\RequestDataBundle\Normalizer\GetMethodNormalizer'
+        arguments: ['@request_stack', '@serializer.normalizer.object']
+        tags: ['serializer.normalizer']
+
+    request_data.extractor:
+        class: 'Bilyiv\RequestDataBundle\Extractor'
+        arguments: ['@request_stack']
+
+    request_data.controller_listener:
+        class: 'Bilyiv\RequestDataBundle\EventListener\ControllerListener'
+        arguments: ['@serializer', '@validator', '@request_data.extractor']
+        tags: ['kernel.event_subscriber']
