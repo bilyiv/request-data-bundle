@@ -13,6 +13,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=7.0",
+        "symfony/http-kernel": "~3.4|~4.0",
         "symfony/serializer": "^3.4.0 || ^4.0.0",
         "symfony/validator": "^3.4.0 || ^4.0.0"
     },
