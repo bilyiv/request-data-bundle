@@ -96,13 +96,13 @@ class Extractor implements ExtractorInterface
      */
     protected function extractFormat()
     {
+        $format = $this->request->getFormat($this->request->headers->get('content-type'));
+
         if ($this->request->getMethod() === Request::METHOD_GET) {
             $format = 'json';
-        } else {
-            $format = $this->request->getFormat($this->request->headers->get('content-type'));
         }
 
-        if ($format && \in_array($format, static::$supportedFormats)) {
+        if (\in_array($format, static::$supportedFormats)) {
             $this->format = $format;
         }
     }
