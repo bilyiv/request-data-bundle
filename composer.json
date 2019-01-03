@@ -1,0 +1,29 @@
+{
+    "name": "bilyiv/request-data-bundle",
+    "type": "symfony-bundle",
+    "description": "Represents request data in a useful way",
+    "keywords": ["request", "data", "api", "rest", "json"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vladyslav Bilyi",
+            "email": "beliyvladislav@gmail.com"
+        }
+    ],
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.0",
+        "symfony/serializer": "^3.4.0 || ^4.0.0",
+        "symfony/validator": "^3.4.0 || ^4.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bilyiv\\RequestDataBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.2.x-dev"
+        }
+    }
+}
