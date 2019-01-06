@@ -4,9 +4,12 @@ services:
         class: 'Bilyiv\RequestDataBundle\Extractor\Extractor'
         arguments: ['@request_stack']
 
-    request_data.normalizer.get_method:
-        class: 'Bilyiv\RequestDataBundle\Normalizer\GetMethodNormalizer'
-        arguments: ['@request_stack', '@serializer.normalizer.object']
+    request_data.type_converter:
+        class: 'Bilyiv\RequestDataBundle\TypeConverter\TypeConverter'
+
+    request_data.normalizer.request_data:
+        class: 'Bilyiv\RequestDataBundle\Normalizer\RequestDataNormalizer'
+        arguments: ['@request_stack', '@serializer.normalizer.object', '@request_data.type_converter']
         tags:
             - {name: 'serializer.normalizer'}
 
