@@ -1,6 +1,6 @@
 <?php
 
-namespace Bilyiv\RequestDataBundle;
+namespace Bilyiv\RequestDataBundle\Extractor;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;

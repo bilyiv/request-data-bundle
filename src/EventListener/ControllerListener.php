@@ -4,7 +4,7 @@ namespace Bilyiv\RequestDataBundle\EventListener;
 
 use Bilyiv\RequestDataBundle\Exception\DeserializationException;
 use Bilyiv\RequestDataBundle\Exception\ValidationException;
-use Bilyiv\RequestDataBundle\ExtractorInterface;
+use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;

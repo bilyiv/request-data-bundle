@@ -1,6 +1,6 @@
 <?php
 
-namespace Bilyiv\RequestDataBundle;
+namespace Bilyiv\RequestDataBundle\Extractor;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
