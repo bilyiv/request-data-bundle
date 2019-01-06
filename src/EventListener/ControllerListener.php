@@ -1,20 +1,18 @@
 <?php
 
-namespace Bilyiv\RequestDataBundle\EventSubscriber;
+namespace Bilyiv\RequestDataBundle\EventListener;
 
 use Bilyiv\RequestDataBundle\Exception\DeserializationException;
 use Bilyiv\RequestDataBundle\Exception\ValidationException;
 use Bilyiv\RequestDataBundle\ExtractorInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
  */
-class ControllerListener implements EventSubscriberInterface
+class ControllerListener
 {
     /**
      * @var SerializerInterface
@@ -85,15 +83,5 @@ class ControllerListener implements EventSubscriberInterface
 
             $event->getRequest()->attributes->set($parameter->getName(), $requestData);
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-            KernelEvents::CONTROLLER => 'onKernelController',
-        ];
     }
 }
