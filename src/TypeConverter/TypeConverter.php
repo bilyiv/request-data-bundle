@@ -42,6 +42,9 @@ class TypeConverter implements TypeConverterInterface
      */
     protected function convertString(string $value)
     {
+        if ($value === '' || $value === 'null') {
+            return null;
+        }
         if ($value === 'true') {
             return true;
         }
