@@ -2,11 +2,11 @@
 
 This bundle allows you to represent already validated request data in a structured way by creating specific classes.
 
+Some features: query parameters type normalization, `json, xml, csv` request body deserialization, data validation.
 
 ## Getting started
 
 ### Create a request data class
- 
 ```php
 namespace App\RequestData;
 
