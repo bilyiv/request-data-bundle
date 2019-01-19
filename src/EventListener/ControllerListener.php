@@ -73,7 +73,7 @@ class ControllerListener
             try {
                 $requestData = $this->serializer->deserialize($data, $class->getName(), $format);
             } catch (\Exception $exception) {
-                throw new DeserializationException('Request data schema is not valid', 0, $exception);
+                throw new DeserializationException($exception->getMessage(), $exception->getCode(), $exception);
             }
 
             $errors = $this->validator->validate($requestData);
