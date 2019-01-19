@@ -59,7 +59,7 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return \strpos($type, 'App\\RequestData\\') === 0;
+        return \strpos($type, 'App\\RequestData\\') === 0 && \class_exists($type);
     }
 
     /**
