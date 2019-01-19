@@ -15,7 +15,6 @@ class UserSearchRequestData
     public const DEFAULT_LIMIT = 10;
 
     /**
-     * @Assert\Type("string")
      * @Assert\Length(min=3)
      *
      * @var null|string
@@ -30,8 +29,6 @@ class UserSearchRequestData
     public $offset;
 
     /**
-     * @Assert\NotNull
-     * @Assert\GreaterThan(0)
      * @Assert\LessThanOrEqual(100)
      *
      * @var null|int
