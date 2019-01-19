@@ -8,6 +8,8 @@ This bundle allows you to represent already validated request data in a structur
 ### Create a request data class
  
 ```php
+namespace App\RequestData;
+
 class UserSearchRequestData
 {
     public const DEFAULT_LIMIT = 10;
@@ -41,6 +43,7 @@ class UserSearchRequestData
 ### Use it in your controller
 
 ```php
+namespace App\Controller;
 
 class UserController extends Controller
 {
