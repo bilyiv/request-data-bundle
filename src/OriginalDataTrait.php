@@ -7,13 +7,23 @@ namespace Bilyiv\RequestDataBundle;
  */
 trait OriginalDataTrait
 {
+    /**
+     * @var null|array
+     */
     private $originalData;
 
+    /**
+     * @return null|array $data
+     */
     public function getOriginalData(): ?array
     {
         return $this->originalData;
     }
 
+    /**
+     * @param null|array $data
+     * @return self
+     */
     public function setOriginalData(?array $data): self
     {
         $this->originalData = $data;
