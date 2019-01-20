@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Bilyiv\\RequestDataBundle\\": "src/"
+            "Bilyiv\\RequestDataBundle\\": ""
         }
     },
     "extra": {
