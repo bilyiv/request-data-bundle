@@ -10,6 +10,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    public const DEFAULT_PREFIX = 'App\\RequestData';
+
     /**
      * {@inheritdoc}
      */
@@ -20,6 +22,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->scalarNode('prefix')
+            ->defaultValue(self::DEFAULT_PREFIX)
             ->end();
 
         return $treeBuilder;
