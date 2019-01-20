@@ -30,11 +30,21 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
      */
     private $converter;
 
-    public function __construct(RequestStack $requestStack, ObjectNormalizer $normalizer, TypeConverterInterface $converter)
-    {
+    /**
+     * @var string
+     */
+    private $prefix;
+
+    public function __construct(
+        RequestStack $requestStack,
+        ObjectNormalizer $normalizer,
+        TypeConverterInterface $converter,
+        string $prefix
+    ) {
         $this->request = $requestStack->getCurrentRequest();
         $this->normalizer = $normalizer;
         $this->converter = $converter;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -59,7 +69,7 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return \strpos($type, 'App\\RequestData\\') === 0 && \class_exists($type);
+        return \strpos($type, $this->prefix) === 0 && \class_exists($type);
     }
 
     /**

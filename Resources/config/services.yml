@@ -9,7 +9,7 @@ services:
 
     request_data.normalizer.request_data:
         class: 'Bilyiv\RequestDataBundle\Normalizer\RequestDataNormalizer'
-        arguments: ['@request_stack', '@serializer.normalizer.object', '@request_data.type_converter']
+        arguments: ['@request_stack', '@serializer.normalizer.object', '@request_data.type_converter', '']
         tags:
             - {name: 'serializer.normalizer'}
 
