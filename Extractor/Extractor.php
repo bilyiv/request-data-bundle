@@ -11,99 +11,64 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class Extractor implements ExtractorInterface
 {
     /**
-     * @var array
+     * @var RequestStack
      */
-    public static $supportedFormats = ['json', 'xml', 'csv'];
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var null|string
-     */
-    private $data;
-
-    /**
-     * @var null|string
-     */
-    private $format;
+    private $requestStack;
 
     public function __construct(RequestStack $requestStack)
     {
-        $this->request = $requestStack->getCurrentRequest();
-
-        $this->extractData();
-        $this->extractFormat();
+        $this->requestStack = $requestStack;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getData(): ?string
+    public function extractData(): ?string
     {
-        return $this->data;
-    }
+        $request = $this->requestStack->getCurrentRequest();
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormat(): ?string
-    {
-        return $this->format;
-
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSupportedFormats(): array
-    {
-        return self::$supportedFormats;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function addSupportedFormat(string $format)
-    {
-        self::$supportedFormats[] = $format;
-    }
-
-    /**
-     * Extract data from request.
-     */
-    protected function extractData()
-    {
-        switch ($this->request->getMethod()) {
+        switch ($request->getMethod()) {
             case Request::METHOD_GET:
-                if ($query = $this->request->query->all()) {
-                    $this->data = \json_encode($query);
+                if ($query = $request->query->all()) {
+                    return \json_encode($query);
                 }
                 break;
 
             case Request::METHOD_POST:
             case Request::METHOD_PUT:
             case Request::METHOD_PATCH:
-                $this->data = $this->request->getContent();
+                return $request->getContent();
                 break;
         }
+
+        return null;
     }
 
     /**
-     * Extract format from request.
+     * {@inheritdoc}
      */
-    protected function extractFormat()
+    public function extractFormat(): ?string
     {
-        $format = $this->request->getFormat($this->request->headers->get('content-type'));
+        $request = $this->requestStack->getCurrentRequest();
 
-        if ($this->request->getMethod() === Request::METHOD_GET) {
-            $format = 'json';
+        if ($request->getMethod() === Request::METHOD_GET) {
+            return 'json';
         }
 
-        if (\in_array($format, static::$supportedFormats)) {
-            $this->format = $format;
+        $format = $request->getFormat($request->headers->get('content-type'));
+
+        if (!in_array($format, $this->getSupportedFormats())) {
+            return null;
         }
+
+        return $format;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSupportedFormats(): array
+    {
+        return ['json', 'xml', 'csv'];
     }
 }

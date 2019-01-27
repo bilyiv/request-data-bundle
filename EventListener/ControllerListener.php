@@ -43,12 +43,12 @@ class ControllerListener
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        $format = $this->extractor->getFormat();
+        $format = $this->extractor->extractFormat();
         if (!$format) {
             return;
         }
 
-        $data = $this->extractor->getData();
+        $data = $this->extractor->extractData();
         if (!$data) {
             return;
         }

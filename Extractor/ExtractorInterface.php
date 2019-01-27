@@ -12,26 +12,19 @@ interface ExtractorInterface
      *
      * @return null|string
      */
-    public function getData(): ?string;
+    public function extractData(): ?string;
 
     /**
      * Detect and returns deserialization format.
      *
      * @return null|string
      */
-    public function getFormat(): ?string;
+    public function extractFormat(): ?string;
 
     /**
      * Returns supported deserialization formats.
      *
      * @return array
      */
-    public static function getSupportedFormats(): array;
-
-    /**
-     * Adds a new supported deserialization format.
-     *
-     * @param string $format
-     */
-    public static function addSupportedFormat(string $format);
+    public function getSupportedFormats(): array;
 }
