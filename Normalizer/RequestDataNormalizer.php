@@ -16,9 +16,9 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsMethodInterface
 {
     /**
-     * @var Request
+     * @var RequestStack
      */
-    private $request;
+    private $requestStack;
 
     /**
      * @var ObjectNormalizer
@@ -41,7 +41,7 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
         TypeConverterInterface $converter,
         string $prefix
     ) {
-        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
         $this->normalizer = $normalizer;
         $this->converter = $converter;
         $this->prefix = $prefix;
@@ -52,7 +52,9 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
-        if ($this->request->getMethod() === Request::METHOD_GET) {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($request->getMethod() === Request::METHOD_GET) {
             $data = $this->converter->convert($data);
         }
 
