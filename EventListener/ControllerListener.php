@@ -29,10 +29,21 @@ class ControllerListener
      */
     private $extractor;
 
-    public function __construct(SerializerInterface $serializer, ValidatorInterface $validator, ExtractorInterface $extractor) {
+    /**
+     * @var string
+     */
+    private $prefix;
+
+    public function __construct(
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        ExtractorInterface $extractor,
+        string $prefix
+    ) {
         $this->serializer = $serializer;
         $this->validator = $validator;
         $this->extractor = $extractor;
+        $this->prefix = $prefix;
     }
 
     /**
@@ -66,7 +77,7 @@ class ControllerListener
         $parameters = $controllerClass->getMethod($controller[1])->getParameters();
         foreach ($parameters as $parameter) {
             $class = $parameter->getClass();
-            if (!$class || strpos($class->getName(), 'App\\RequestData\\') !== 0) {
+            if (!$class || strpos($class->getName(), $this->prefix) !== 0) {
                 continue;
             }
 
