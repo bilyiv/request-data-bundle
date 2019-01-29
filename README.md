@@ -7,19 +7,13 @@ Some features: query parameters type normalization, `json` request body deserial
 ## Getting started
 
 ### Create a request data class
+
 ```php
 namespace App\RequestData;
 
-class UserSearchRequestData
+class SearchRequestData
 {
     public const DEFAULT_LIMIT = 10;
-
-    /**
-     * @Assert\Length(min=3)
-     *
-     * @var null|string
-     */
-    public $name;
 
     /**
      * @Assert\GreaterThanOrEqual(0)
@@ -37,21 +31,19 @@ class UserSearchRequestData
 }
 ```
 
-### Use it in your controller
+### Use this class in your controller
 
 ```php
 namespace App\Controller;
 
-class UserController extends Controller
+class ExampleController extends Controller
 {
     /**
-     * @Route("/users", name="users-search", methods={"GET"})
+     * @Route("/search", name="search", methods={"GET"})
      */
-    public function search(UserSearchRequestData $data)
+    public function search(SearchRequestData $data)
     {
-        // here you have already validated and fully safe request data.
-        echo $data->name, $data->offset, $data->limit;
-        
+        // Pass the data with already validated offset, limit to repository method. 
         $users = $this->getRepository(User::class)->search($data);
         
         // ...
