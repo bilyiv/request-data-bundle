@@ -69,6 +69,6 @@ class Extractor implements ExtractorInterface
      */
     public function getSupportedFormats(): array
     {
-        return ['json', 'xml', 'csv'];
+        return ['json'];
     }
 }
