@@ -4,7 +4,15 @@ This bundle allows you to represent already validated request data in a structur
 
 Some features: query parameters type normalization, `json` request body deserialization, data validation.
 
-## Getting started
+## Installation
+
+Run the following command using [Composer](http://packagist.org):
+
+```sh
+composer require bilyiv/request-data-bundle
+```
+
+## Example
 
 ### Create a request data class
 
