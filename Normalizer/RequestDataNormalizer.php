@@ -2,7 +2,7 @@
 
 namespace Bilyiv\RequestDataBundle\Normalizer;
 
-use Bilyiv\RequestDataBundle\OriginalDataTrait;
+use Bilyiv\RequestDataBundle\OriginalDataInterface;
 use Bilyiv\RequestDataBundle\TypeConverter\TypeConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -59,7 +59,7 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
         }
 
         $object = $this->normalizer->denormalize($data, $class, $format, $context);
-        if ($object instanceof OriginalDataTrait) {
+        if ($object instanceof OriginalDataInterface) {
             $object->setOriginalData($data);
         }
 
