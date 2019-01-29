@@ -44,7 +44,7 @@ class ExampleController extends Controller
     public function search(SearchRequestData $data)
     {
         // Pass the data with already validated offset, limit to repository method. 
-        $users = $this->getRepository(User::class)->search($data);
+        $result = $this->getRepository(Entity::class)->search($data);
         
         // ...
     }
