@@ -80,5 +80,6 @@ class RequestDataNormalizerTest extends TestCase
         $object = $this->normalizer->denormalize(['foo' => 'bar'], TestRequestData::class);
 
         $this->assertEquals($object->foo, 'bar');
+        $this->assertEquals(['foo' => 'bar'], $object->getOriginalData());
     }
 }
