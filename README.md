@@ -1,8 +1,8 @@
 # Request data bundle
 
-This bundle allows you to represent already validated request data in a structured way by creating specific classes.
+This bundle allows you to represent request data in a structured and useful way by creating request data classes.
 
-Some features: query parameters type normalization, `json` request body deserialization, data validation.
+It supports query parameters type normalization, request body deserialization.
 
 ## Getting started
 
@@ -16,15 +16,11 @@ class SearchRequestData
     public const DEFAULT_LIMIT = 10;
 
     /**
-     * @Assert\GreaterThanOrEqual(0)
-     *
      * @var null|int
      */
     public $offset;
 
     /**
-     * @Assert\LessThanOrEqual(100)
-     *
      * @var null|int
      */
     public $limit = self::DEFAULT_LIMIT;
@@ -43,7 +39,7 @@ class ExampleController extends Controller
      */
     public function search(SearchRequestData $data)
     {
-        // Pass the data with already validated offset, limit to repository method. 
+        // Use request data object in your repository.
         $result = $this->getRepository(Entity::class)->search($data);
         
         // ...

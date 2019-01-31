@@ -10,11 +10,10 @@ use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestData;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestDataController;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
@@ -47,13 +46,9 @@ class ControllerListenerTest extends TestCase
             ->method('deserialize')
             ->willReturn($testRequestData);
 
-        $validator = $this->getMockBuilder(ValidatorInterface::class)
+        $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $validator
-            ->method('validate')
-            ->willReturn(new ConstraintViolationList());
 
         $this->extractor = $this->getMockBuilder(ExtractorInterface::class)
             ->disableOriginalConstructor()
@@ -61,7 +56,7 @@ class ControllerListenerTest extends TestCase
 
         $this->controllerListener = new ControllerListener(
             $serializer,
-            $validator,
+            $dispatcher,
             $this->extractor,
             'Bilyiv\RequestDataBundle\Tests\Fixtures'
         );

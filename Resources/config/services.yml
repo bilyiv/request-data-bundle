@@ -15,6 +15,6 @@ services:
 
     request_data.controller_listener:
         class: 'Bilyiv\RequestDataBundle\EventListener\ControllerListener'
-        arguments: ['@serializer', '@validator', '@request_data.extractor']
+        arguments: ['@serializer', '@event_dispatcher', '@request_data.extractor', '']
         tags:
             - {name: 'kernel.event_listener', event: 'kernel.controller'}

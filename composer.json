@@ -1,7 +1,7 @@
 {
     "name": "bilyiv/request-data-bundle",
     "type": "symfony-bundle",
-    "description": "Represents request data in a useful way",
+    "description": "Represents request data in a structured and useful way.",
     "keywords": ["request", "data", "api", "rest", "json"],
     "license": "MIT",
     "authors": [
@@ -17,7 +17,7 @@
         "symfony/dependency-injection": "^3.4|^4",
         "symfony/http-kernel": "~3.4|~4.0",
         "symfony/serializer": "^3.4.0 || ^4.0.0",
-        "symfony/validator": "^3.4.0 || ^4.0.0"
+        "symfony/event-dispatcher": "^4.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^7"

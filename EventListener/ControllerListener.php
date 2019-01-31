@@ -2,12 +2,13 @@
 
 namespace Bilyiv\RequestDataBundle\EventListener;
 
+use Bilyiv\RequestDataBundle\Event\DeserializedEvent;
+use Bilyiv\RequestDataBundle\Events;
 use Bilyiv\RequestDataBundle\Exception\DeserializationException;
-use Bilyiv\RequestDataBundle\Exception\ValidationException;
 use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
@@ -20,9 +21,9 @@ class ControllerListener
     private $serializer;
 
     /**
-     * @var ValidatorInterface
+     * @var EventDispatcherInterface
      */
-    private $validator;
+    private $dispatcher;
 
     /**
      * @var ExtractorInterface
@@ -36,12 +37,12 @@ class ControllerListener
 
     public function __construct(
         SerializerInterface $serializer,
-        ValidatorInterface $validator,
+        EventDispatcherInterface $dispatcher,
         ExtractorInterface $extractor,
         string $prefix
     ) {
         $this->serializer = $serializer;
-        $this->validator = $validator;
+        $this->dispatcher = $dispatcher;
         $this->extractor = $extractor;
         $this->prefix = $prefix;
     }
@@ -49,7 +50,6 @@ class ControllerListener
     /**
      * @param FilterControllerEvent $event
      * @throws DeserializationException
-     * @throws ValidationException
      * @throws \ReflectionException
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -87,12 +87,9 @@ class ControllerListener
                 throw new DeserializationException($exception->getMessage(), $exception->getCode(), $exception);
             }
 
-            $errors = $this->validator->validate($requestData);
-            if ($errors->count() !== 0) {
-                throw new ValidationException($errors, 'Request data is not valid');
-            }
-
             $event->getRequest()->attributes->set($parameter->getName(), $requestData);
+
+            $this->dispatcher->dispatch(Events::DESERIALIZED, new DeserializedEvent($requestData));
         }
     }
 }
