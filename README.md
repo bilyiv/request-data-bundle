@@ -4,7 +4,15 @@ This bundle allows you to represent request data in a structured and useful way 
 
 It supports query parameters type normalization, request body deserialization.
 
-## Getting started
+## Installation
+
+Run the following command using [Composer](http://packagist.org):
+
+```sh
+composer require bilyiv/request-data-bundle
+```
+
+## Example
 
 ### Create a request data class
 
