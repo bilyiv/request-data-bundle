@@ -21,6 +21,11 @@ use Symfony\Component\Serializer\SerializerInterface;
 class ControllerListenerTest extends TestCase
 {
     /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    /**
      * @var ExtractorInterface|MockObject
      */
     private $extractor;
@@ -46,7 +51,7 @@ class ControllerListenerTest extends TestCase
             ->method('deserialize')
             ->willReturn($testRequestData);
 
-        $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
+        $this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -56,7 +61,7 @@ class ControllerListenerTest extends TestCase
 
         $this->controllerListener = new ControllerListener(
             $serializer,
-            $dispatcher,
+            $this->dispatcher,
             $this->extractor,
             'Bilyiv\RequestDataBundle\Tests\Fixtures'
         );
@@ -75,6 +80,10 @@ class ControllerListenerTest extends TestCase
             ->expects($this->once())
             ->method('extractFormat')
             ->willReturn(null);
+
+        $this->dispatcher
+            ->expects($this->never())
+            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -99,6 +108,10 @@ class ControllerListenerTest extends TestCase
             ->expects($this->once())
             ->method('extractData')
             ->willReturn(null);
+
+        $this->dispatcher
+            ->expects($this->never())
+            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -129,6 +142,10 @@ class ControllerListenerTest extends TestCase
             ->method('extractData')
             ->willReturn('{"post": "data"}');
 
+        $this->dispatcher
+            ->expects($this->never())
+            ->method('dispatch');
+
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
         $this->assertNull($result);
@@ -157,6 +174,10 @@ class ControllerListenerTest extends TestCase
             ->expects($this->once())
             ->method('extractData')
             ->willReturn('{"post": "data"}');
+
+        $this->dispatcher
+            ->expects($this->never())
+            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -190,6 +211,10 @@ class ControllerListenerTest extends TestCase
             ->expects($this->once())
             ->method('extractData')
             ->willReturn('{"post": "data"}');
+
+        $this->dispatcher
+            ->expects($this->never())
+            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -226,6 +251,10 @@ class ControllerListenerTest extends TestCase
             ->expects($this->once())
             ->method('extractData')
             ->willReturn('{"post": "data"}');
+
+        $this->dispatcher
+            ->expects($this->once())
+            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
