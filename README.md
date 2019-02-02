@@ -2,7 +2,12 @@
 
 This bundle allows you to represent request data in a structured and useful way by creating request data classes.
 
-It supports query parameters type normalization, request body deserialization.
+Features:
+
+* It represents query parameters
+* It represents a request body and supports only `json` format for now
+* It normalizes query parameters type
+* It dispatches the event when request data is ready
 
 ## Installation
 
