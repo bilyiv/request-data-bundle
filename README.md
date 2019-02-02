@@ -19,7 +19,7 @@ composer require bilyiv/request-data-bundle
 ```php
 namespace App\RequestData;
 
-class SearchRequestData
+class PaginationRequestData
 {
     public const DEFAULT_LIMIT = 10;
 
@@ -43,12 +43,12 @@ namespace App\Controller;
 class ExampleController extends Controller
 {
     /**
-     * @Route("/search", name="search", methods={"GET"})
+     * @Route("/entities", name="index", methods={"GET"})
      */
-    public function search(SearchRequestData $data)
+    public function index(PaginationRequestData $data)
     {
         // Use request data object in your repository.
-        $result = $this->getRepository(Entity::class)->search($data);
+        $result = $this->getRepository(Entity::class)->paginate($data);
         
         // ...
     }
