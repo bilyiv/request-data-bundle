@@ -10,14 +10,14 @@ interface ExtractorInterface
     /**
      * Detect and returns deserialization data.
      *
-     * @return null|string
+     * @return string|null
      */
     public function extractData(): ?string;
 
     /**
      * Detect and returns deserialization format.
      *
-     * @return null|string
+     * @return string|null
      */
     public function extractFormat(): ?string;
 

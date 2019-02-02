@@ -8,12 +8,13 @@ namespace Bilyiv\RequestDataBundle;
 interface OriginalDataInterface
 {
     /**
-     * @return null|array $data
+     * @return array|null $data
      */
     public function getOriginalData(): ?array;
 
     /**
      * @param array|null $data
+     *
      * @return mixed
      */
     public function setOriginalData(?array $data);

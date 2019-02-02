@@ -48,13 +48,13 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request->getMethod() === Request::METHOD_GET) {
+        if (Request::METHOD_GET === $request->getMethod()) {
             $data = $this->converter->convert($data);
         }
 
@@ -67,11 +67,11 @@ class RequestDataNormalizer implements DenormalizerInterface, CacheableSupportsM
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return \strpos($type, $this->prefix) === 0 && \class_exists($type);
+        return 0 === \strpos($type, $this->prefix) && \class_exists($type);
     }
 
     /**

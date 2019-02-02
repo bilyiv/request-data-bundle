@@ -9,6 +9,7 @@ interface TypeConverterInterface
 {
     /**
      * @param $value
+     *
      * @return mixed
      */
     public function convert($value);

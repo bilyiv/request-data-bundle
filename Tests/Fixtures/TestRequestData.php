@@ -13,7 +13,7 @@ class TestRequestData implements OriginalDataInterface
     use OriginalDataTrait;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     public $foo;
 }

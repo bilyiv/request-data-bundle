@@ -8,12 +8,12 @@ namespace Bilyiv\RequestDataBundle;
 trait OriginalDataTrait
 {
     /**
-     * @var null|array
+     * @var array|null
      */
     private $originalData;
 
     /**
-     * @return null|array $data
+     * @return array|null $data
      */
     public function getOriginalData(): ?array
     {
@@ -21,7 +21,8 @@ trait OriginalDataTrait
     }
 
     /**
-     * @param null|array $data
+     * @param array|null $data
+     *
      * @return self
      */
     public function setOriginalData(?array $data): self

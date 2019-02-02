@@ -25,6 +25,7 @@ class TypeConverter implements TypeConverterInterface
 
     /**
      * @param array $values
+     *
      * @return array
      */
     protected function convertArray(array $values)
@@ -38,17 +39,18 @@ class TypeConverter implements TypeConverterInterface
 
     /**
      * @param string $value
+     *
      * @return mixed
      */
     protected function convertString(string $value)
     {
-        if ($value === '' || $value === 'null') {
+        if ('' === $value || 'null' === $value) {
             return null;
         }
-        if ($value === 'true') {
+        if ('true' === $value) {
             return true;
         }
-        if ($value === 'false') {
+        if ('false' === $value) {
             return false;
         }
         if (preg_match('/^-?\d+$/', $value)) {

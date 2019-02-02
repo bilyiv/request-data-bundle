@@ -51,7 +51,7 @@ class Extractor implements ExtractorInterface
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        if ($request->getMethod() === Request::METHOD_GET) {
+        if (Request::METHOD_GET === $request->getMethod()) {
             return 'json';
         }
 

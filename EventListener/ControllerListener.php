@@ -48,6 +48,7 @@ class ControllerListener
 
     /**
      * @param FilterControllerEvent $event
+     *
      * @throws \ReflectionException
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -76,7 +77,7 @@ class ControllerListener
         foreach ($parameters as $parameter) {
             $class = $parameter->getClass();
 
-            if ($class && strpos($class->getName(), $this->prefix) === 0) {
+            if ($class && 0 === strpos($class->getName(), $this->prefix)) {
                 $requestData = $this->serializer->deserialize($data, $class->getName(), $format);
 
                 $event->getRequest()->attributes->set($parameter->getName(), $requestData);
