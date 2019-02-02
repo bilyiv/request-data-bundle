@@ -4,11 +4,9 @@ namespace Bilyiv\RequestDataBundle\EventListener;
 
 use Bilyiv\RequestDataBundle\Event\FinishEvent;
 use Bilyiv\RequestDataBundle\Events;
-use Bilyiv\RequestDataBundle\Exception\DeserializationException;
 use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -50,7 +48,6 @@ class ControllerListener
 
     /**
      * @param FilterControllerEvent $event
-     * @throws DeserializationException
      * @throws \ReflectionException
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -78,19 +75,16 @@ class ControllerListener
         $parameters = $controllerClass->getMethod($controller[1])->getParameters();
         foreach ($parameters as $parameter) {
             $class = $parameter->getClass();
-            if (!$class || strpos($class->getName(), $this->prefix) !== 0) {
-                continue;
-            }
 
-            try {
+            if ($class && strpos($class->getName(), $this->prefix) === 0) {
                 $requestData = $this->serializer->deserialize($data, $class->getName(), $format);
-            } catch (ExceptionInterface $exception) {
-                throw new DeserializationException($exception->getMessage(), $exception->getCode(), $exception);
+
+                $event->getRequest()->attributes->set($parameter->getName(), $requestData);
+
+                $this->dispatcher->dispatch(Events::FINISH, new FinishEvent($requestData));
+
+                break;
             }
-
-            $event->getRequest()->attributes->set($parameter->getName(), $requestData);
-
-            $this->dispatcher->dispatch(Events::FINISH, new FinishEvent($requestData));
         }
     }
 }
