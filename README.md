@@ -12,9 +12,9 @@ Run the following command using [Composer](http://packagist.org):
 composer require bilyiv/request-data-bundle
 ```
 
-## Example
+## Usage
 
-### Create a request data class
+#### Create a request data class
 
 ```php
 namespace App\RequestData;
@@ -35,7 +35,7 @@ class PaginationRequestData
 }
 ```
 
-### Use this class in your controller
+#### Use this class in your controller
 
 ```php
 namespace App\Controller;
