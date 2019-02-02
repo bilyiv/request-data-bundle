@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
  */
-class DeserializedEvent extends Event
+class FinishEvent extends Event
 {
     /**
      * @var object

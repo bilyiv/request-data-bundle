@@ -8,9 +8,9 @@ namespace Bilyiv\RequestDataBundle;
 final class Events
 {
     /**
-     * The FINISH event occurs when a request data was deserialized.
+     * The FINISH event occurs when a request data is deserialized.
      *
-     * @Event("Bilyiv\RequestDataBundle\Event\DeserializedEvent")
+     * @Event("Bilyiv\RequestDataBundle\Event\FinishEvent")
      */
-    const DESERIALIZED = 'request_data.deserialized';
+    const FINISH = 'request_data.finish';
 }
