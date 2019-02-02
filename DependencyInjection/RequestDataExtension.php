@@ -21,9 +21,9 @@ class RequestDataExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $definition = $container->getDefinition('request_data.normalizer.request_data');
-        $definition->replaceArgument(3, $config['prefix']);
+        $definition->replaceArgument('$prefix', $config['prefix']);
 
         $definition = $container->getDefinition('request_data.controller_listener');
-        $definition->replaceArgument(3, $config['prefix']);
+        $definition->replaceArgument('$prefix', $config['prefix']);
     }
 }

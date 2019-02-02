@@ -1,20 +1,28 @@
 services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
 
     request_data.extractor:
         class: 'Bilyiv\RequestDataBundle\Extractor\Extractor'
-        arguments: ['@request_stack']
+
+    Bilyiv\RequestDataBundle\Extractor\ExtractorInterface: '@request_data.extractor'
 
     request_data.type_converter:
         class: 'Bilyiv\RequestDataBundle\TypeConverter\TypeConverter'
 
+    Bilyiv\RequestDataBundle\TypeConverter\TypeConverterInterface: '@request_data.type_converter'
+
     request_data.normalizer.request_data:
         class: 'Bilyiv\RequestDataBundle\Normalizer\RequestDataNormalizer'
-        arguments: ['@request_stack', '@serializer.normalizer.object', '@request_data.type_converter', '']
+        arguments:
+            $prefix: ''
         tags:
             - {name: 'serializer.normalizer'}
 
     request_data.controller_listener:
         class: 'Bilyiv\RequestDataBundle\EventListener\ControllerListener'
-        arguments: ['@serializer', '@event_dispatcher', '@request_data.extractor', '']
+        arguments:
+            $prefix: ''
         tags:
             - {name: 'kernel.event_listener', event: 'kernel.controller'}
