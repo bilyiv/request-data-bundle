@@ -2,6 +2,7 @@
 
 namespace Bilyiv\RequestDataBundle\Extractor;
 
+use Bilyiv\RequestDataBundle\Formats;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -11,57 +12,41 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class Extractor implements ExtractorInterface
 {
     /**
-     * @var RequestStack
+     * @var Request
      */
-    private $requestStack;
+    private $request;
+
+    /**
+     * @var mixed
+     */
+    private $data;
+
+    /**
+     * @var string|null
+     */
+    private $format;
 
     public function __construct(RequestStack $requestStack)
     {
-        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->format = $this->extractFormat();
+        $this->data = $this->extractData();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function extractData(): ?string
+    public function getData()
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        switch ($request->getMethod()) {
-            case Request::METHOD_GET:
-                if ($query = $request->query->all()) {
-                    return \json_encode($query);
-                }
-                break;
-
-            case Request::METHOD_POST:
-            case Request::METHOD_PUT:
-            case Request::METHOD_PATCH:
-                return $request->getContent();
-                break;
-        }
-
-        return null;
+        return $this->data;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function extractFormat(): ?string
+    public function getFormat(): ?string
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        if (Request::METHOD_GET === $request->getMethod()) {
-            return 'json';
-        }
-
-        $format = $request->getFormat($request->headers->get('content-type'));
-
-        if (!in_array($format, $this->getSupportedFormats())) {
-            return null;
-        }
-
-        return $format;
+        return $this->format;
     }
 
     /**
@@ -69,6 +54,45 @@ class Extractor implements ExtractorInterface
      */
     public function getSupportedFormats(): array
     {
-        return ['json'];
+        return [Formats::JSON, Formats::FORM];
+    }
+
+    /**
+     * Extract data from current request.
+     */
+    protected function extractData()
+    {
+        $method = $this->request->getMethod();
+
+        if (Request::METHOD_GET === $method) {
+            return $this->request->query->all();
+        }
+
+        if (Request::METHOD_POST === $method || Request::METHOD_PUT === $method || Request::METHOD_PATCH === $method) {
+            if (Formats::FORM === $this->getFormat()) {
+                return $this->request->files->all() + $this->request->request->all();
+            }
+
+            return $this->request->getContent();
+        }
+
+        return null;
+    }
+
+    /**
+     * Extract format from current request.
+     */
+    protected function extractFormat(): ?string
+    {
+        if (Request::METHOD_GET === $this->request->getMethod()) {
+            return Formats::FORM;
+        }
+
+        $format = $this->request->getFormat($this->request->headers->get('content-type'));
+        if (!in_array($format, $this->getSupportedFormats())) {
+            return null;
+        }
+
+        return $format;
     }
 }

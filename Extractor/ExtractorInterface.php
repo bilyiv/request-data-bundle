@@ -8,21 +8,21 @@ namespace Bilyiv\RequestDataBundle\Extractor;
 interface ExtractorInterface
 {
     /**
-     * Detect and returns deserialization data.
+     * Detect and return data.
+     *
+     * @return mixed
+     */
+    public function getData();
+
+    /**
+     * Detect and return format.
      *
      * @return string|null
      */
-    public function extractData(): ?string;
+    public function getFormat(): ?string;
 
     /**
-     * Detect and returns deserialization format.
-     *
-     * @return string|null
-     */
-    public function extractFormat(): ?string;
-
-    /**
-     * Returns supported deserialization formats.
+     * Return supported formats.
      *
      * @return array
      */
