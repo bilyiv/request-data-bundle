@@ -64,15 +64,15 @@ class Extractor implements ExtractorInterface
     {
         $method = $this->request->getMethod();
 
-        if (Request::METHOD_GET === $method) {
-            return $this->request->query->all();
+        if (Formats::FORM === $this->getFormat()) {
+            if (Request::METHOD_GET === $method) {
+                return $this->request->query->all();
+            }
+
+            return $this->request->files->all() + $this->request->request->all();
         }
 
         if (Request::METHOD_POST === $method || Request::METHOD_PUT === $method || Request::METHOD_PATCH === $method) {
-            if (Formats::FORM === $this->getFormat()) {
-                return $this->request->files->all() + $this->request->request->all();
-            }
-
             return $this->request->getContent();
         }
 
@@ -89,6 +89,7 @@ class Extractor implements ExtractorInterface
         }
 
         $format = $this->request->getFormat($this->request->headers->get('content-type'));
+
         if (!in_array($format, $this->getSupportedFormats())) {
             return null;
         }
