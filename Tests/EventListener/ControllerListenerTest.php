@@ -4,32 +4,21 @@ namespace Bilyiv\RequestDataBundle\Tests\EventListener;
 
 use Bilyiv\RequestDataBundle\EventListener\ControllerListener;
 use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
+use Bilyiv\RequestDataBundle\Mapper\MapperInterface;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestAbstractController;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestController;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestData;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestDataController;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
  */
 class ControllerListenerTest extends TestCase
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var ExtractorInterface|MockObject
-     */
-    private $extractor;
-
     /**
      * @var ControllerListener
      */
@@ -40,82 +29,39 @@ class ControllerListenerTest extends TestCase
      */
     public function setUp()
     {
-        $testRequestData = new TestRequestData();
-        $testRequestData->foo = 'bar';
-
-        $serializer = $this->getMockBuilder(SerializerInterface::class)
+        $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $serializer
-            ->method('deserialize')
-            ->willReturn($testRequestData);
-
-        $this->dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
+        $extractor = $this->getMockBuilder(ExtractorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extractor = $this->getMockBuilder(ExtractorInterface::class)
+        $extractor
+            ->method('getFormat')
+            ->willReturn('form');
+
+        $extractor
+            ->method('getData')
+            ->willReturn(["foo" => "bar"]);
+
+        $mapper = $this->getMockBuilder(MapperInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $requestData = new TestRequestData();
+        $requestData->foo = 'bar';
+
+        $mapper
+            ->method('map')
+            ->willReturn($requestData);
 
         $this->controllerListener = new ControllerListener(
-            $serializer,
-            $this->dispatcher,
-            $this->extractor,
+            $dispatcher,
+            $extractor,
+            $mapper,
             'Bilyiv\RequestDataBundle\Tests\Fixtures'
         );
-    }
-
-    /**
-     * Tests if listener do nothing when there is no format.
-     */
-    public function testOnKernelControllerWithoutRequestFormat()
-    {
-        $filterControllerEvent = $this->getMockBuilder(FilterControllerEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractFormat')
-            ->willReturn(null);
-
-        $this->dispatcher
-            ->expects($this->never())
-            ->method('dispatch');
-
-        $result = $this->controllerListener->onKernelController($filterControllerEvent);
-
-        $this->assertNull($result);
-    }
-
-    /**
-     * Tests if listener do nothing when there is no data.
-     */
-    public function testOnKernelControllerWithoutRequestData()
-    {
-        $filterControllerEvent = $this->getMockBuilder(FilterControllerEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractFormat')
-            ->willReturn('json');
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractData')
-            ->willReturn(null);
-
-        $this->dispatcher
-            ->expects($this->never())
-            ->method('dispatch');
-
-        $result = $this->controllerListener->onKernelController($filterControllerEvent);
-
-        $this->assertNull($result);
     }
 
     /**
@@ -132,19 +78,9 @@ class ControllerListenerTest extends TestCase
             ->method('getController')
             ->willReturn(null);
 
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractFormat')
-            ->willReturn('json');
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractData')
-            ->willReturn('{"post": "data"}');
-
-        $this->dispatcher
+        $filterControllerEvent
             ->expects($this->never())
-            ->method('dispatch');
+            ->method('getRequest');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -165,19 +101,9 @@ class ControllerListenerTest extends TestCase
             ->method('getController')
             ->willReturn([TestAbstractController::class]);
 
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractFormat')
-            ->willReturn('json');
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractData')
-            ->willReturn('{"post": "data"}');
-
-        $this->dispatcher
+        $filterControllerEvent
             ->expects($this->never())
-            ->method('dispatch');
+            ->method('getRequest');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -201,20 +127,6 @@ class ControllerListenerTest extends TestCase
         $filterControllerEvent
             ->expects($this->never())
             ->method('getRequest');
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractFormat')
-            ->willReturn('json');
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractData')
-            ->willReturn('{"post": "data"}');
-
-        $this->dispatcher
-            ->expects($this->never())
-            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 
@@ -241,20 +153,6 @@ class ControllerListenerTest extends TestCase
             ->expects($this->once())
             ->method('getRequest')
             ->willReturn($request);
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractFormat')
-            ->willReturn('json');
-
-        $this->extractor
-            ->expects($this->once())
-            ->method('extractData')
-            ->willReturn('{"post": "data"}');
-
-        $this->dispatcher
-            ->expects($this->once())
-            ->method('dispatch');
 
         $result = $this->controllerListener->onKernelController($filterControllerEvent);
 

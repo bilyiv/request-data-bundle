@@ -53,16 +53,6 @@ class ControllerListener
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        $format = $this->extractor->getFormat();
-        if (!$format) {
-            return;
-        }
-
-        $data = $this->extractor->getData();
-        if (!$data) {
-            return;
-        }
-
         $controller = $event->getController();
         if (!is_array($controller)) {
             return;
@@ -78,6 +68,16 @@ class ControllerListener
             $class = $parameter->getClass();
 
             if ($class && 0 === strpos($class->getName(), $this->prefix)) {
+                $format = $this->extractor->getFormat();
+                if (!$format) {
+                    break;
+                }
+
+                $data = $this->extractor->getData();
+                if (!$data) {
+                    break;
+                }
+
                 $requestData = $this->mapper->map($data, $format, $class->getName());
 
                 $event->getRequest()->attributes->set($parameter->getName(), $requestData);
