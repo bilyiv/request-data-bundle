@@ -5,20 +5,15 @@ namespace Bilyiv\RequestDataBundle\EventListener;
 use Bilyiv\RequestDataBundle\Event\FinishEvent;
 use Bilyiv\RequestDataBundle\Events;
 use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
+use Bilyiv\RequestDataBundle\Mapper\MapperInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
  */
 class ControllerListener
 {
-    /**
-     * @var SerializerInterface
-     */
-    private $serializer;
-
     /**
      * @var EventDispatcherInterface
      */
@@ -30,19 +25,24 @@ class ControllerListener
     private $extractor;
 
     /**
+     * @var MapperInterface
+     */
+    private $mapper;
+
+    /**
      * @var string
      */
     private $prefix;
 
     public function __construct(
-        SerializerInterface $serializer,
         EventDispatcherInterface $dispatcher,
         ExtractorInterface $extractor,
+        MapperInterface $mapper,
         string $prefix
     ) {
-        $this->serializer = $serializer;
         $this->dispatcher = $dispatcher;
         $this->extractor = $extractor;
+        $this->mapper = $mapper;
         $this->prefix = $prefix;
     }
 
@@ -53,12 +53,12 @@ class ControllerListener
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        $format = $this->extractor->extractFormat();
+        $format = $this->extractor->getFormat();
         if (!$format) {
             return;
         }
 
-        $data = $this->extractor->extractData();
+        $data = $this->extractor->getData();
         if (!$data) {
             return;
         }
@@ -78,7 +78,7 @@ class ControllerListener
             $class = $parameter->getClass();
 
             if ($class && 0 === strpos($class->getName(), $this->prefix)) {
-                $requestData = $this->serializer->deserialize($data, $class->getName(), $format);
+                $requestData = $this->mapper->map($data, $format, $class->getName());
 
                 $event->getRequest()->attributes->set($parameter->getName(), $requestData);
 
