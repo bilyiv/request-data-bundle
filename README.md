@@ -33,40 +33,53 @@ request_data:
 ```php
 namespace App\RequestData;
 
-class PaginationRequestData
+class PostRequestData
 {
-    public const DEFAULT_LIMIT = 10;
+    public const DEFAULT_AUTHOR = 'none';
 
     /**
-     * @var null|int
+     * @var string
      */
-    public $offset;
+    public $title;
 
     /**
-     * @var null|int
+     * @var string
      */
-    public $limit = self::DEFAULT_LIMIT;
+    public $author = self::DEFAULT_AUTHOR;
 }
 ```
 
-#### Use this class in your controller
+#### Use it in your controller
 
 ```php
 namespace App\Controller;
 
-class ExampleController extends Controller
+class PostController extends AbstractController
 {
     /**
-     * @Route("/entities", name="index", methods={"GET"})
+     * @Route("/", name="action")
      */
-    public function index(PaginationRequestData $data)
+    public function action(PostRequestData $data)
     {
-        // Use request data object in your repository.
-        $result = $this->getRepository(Entity::class)->paginate($data);
-        
-        // ...
+       return new JsonResponse($data);
     }
 }
+```
+
+#### Make requests
+
+All the following requests will return the same response `{"title":"It works","author":"Vlad"}`:
+
+```bash
+curl -X GET 'http://localhost?title=It+works&author=Vlad'
+```
+
+```bash
+curl -X POST 'http://localhost' -d 'title=It+works&author=Vlad'
+```
+
+```bash
+curl -X POST 'http://localhost' -H 'Content-Type: application/json' -d '{"title":"It works","author":"Vlad"}'
 ```
 
 ## License
