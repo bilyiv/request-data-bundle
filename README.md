@@ -2,12 +2,12 @@
 
 This bundle allows you to represent request data in a structured and useful way by creating request data classes.
 
-Features:
+**Features**:
 
-* It represents query parameters
-* It represents a request body and supports only `json` format for now
-* It normalizes query parameters type
-* It dispatches the event when request data is ready
+* Detecting how to extract data depends on request method and `Content-Type` header.
+* Representing and normalizing query parameters for the `GET` request method.
+* Representing `form`, `json` request body for the `POST`, `PUT`, `PATCH` request methods.
+* Dispatching the finish event when request data is ready.
 
 ## Installation
 
@@ -15,6 +15,15 @@ Run the following command using [Composer](http://packagist.org):
 
 ```sh
 composer require bilyiv/request-data-bundle
+```
+
+## Configuration
+
+The default configuration is the following:
+
+```yaml
+request_data:
+    prefix: App\RequestData
 ```
 
 ## Usage
