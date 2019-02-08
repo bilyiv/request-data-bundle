@@ -8,6 +8,11 @@ services:
 
     Bilyiv\RequestDataBundle\Extractor\ExtractorInterface: '@request_data.extractor'
 
+    request_data.mapper:
+        class: 'Bilyiv\RequestDataBundle\Mapper\Mapper'
+
+    Bilyiv\RequestDataBundle\Mapper\MapperInterface: '@request_data.mapper'
+
     request_data.type_converter:
         class: 'Bilyiv\RequestDataBundle\TypeConverter\TypeConverter'
 
