@@ -4,6 +4,7 @@ namespace Bilyiv\RequestDataBundle\Tests\Extractor;
 
 use Bilyiv\RequestDataBundle\Extractor\Extractor;
 use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
+use Bilyiv\RequestDataBundle\Formats;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,11 +21,6 @@ class ExtractorTest extends TestCase
     private $requestStack;
 
     /**
-     * @var Extractor
-     */
-    private $extractor;
-
-    /**
      * {@inheritdoc}
      */
     public function setUp()
@@ -32,52 +28,12 @@ class ExtractorTest extends TestCase
         $this->requestStack = $this->getMockBuilder(RequestStack::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->extractor = new Extractor($this->requestStack);
     }
 
     /**
      * Test if extractor implements necessary interface.
      */
     public function testInterface()
-    {
-        $this->assertInstanceOf(ExtractorInterface::class, $this->extractor);
-    }
-
-    /**
-     * Test if extractor extracts correct data from get request.
-     */
-    public function testExtractDataFromGetRequest()
-    {
-        $request = Request::create('/', Request::METHOD_GET, ['get' => 'request']);
-
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-
-        $this->assertEquals('{"get":"request"}', $this->extractor->extractData());
-    }
-
-    /**
-     * Test if extractor extracts correct data from post request.
-     */
-    public function testExtractDataFromPostRequest()
-    {
-        $request = Request::create('/', Request::METHOD_POST, [], [], [], [], '{"post":"request"}');
-
-        $this->requestStack
-            ->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-
-        $this->assertEquals('{"post":"request"}', $this->extractor->extractData());
-    }
-
-    /**
-     * Test if extractor extracts correct format from get request.
-     */
-    public function testExtractFormatFromGetRequest()
     {
         $request = Request::create('/', Request::METHOD_GET);
 
@@ -86,25 +42,172 @@ class ExtractorTest extends TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->assertEquals('json', $this->extractor->extractFormat());
+        $this->assertInstanceOf(ExtractorInterface::class, new Extractor($this->requestStack));
     }
 
     /**
-     * Test if extractor extracts correct format from post request.
+     * Test if extractor returns form data from GET request.
      */
-    public function testExtractFormatFromPostRequest()
+    public function testGetFormDataFromGetRequest()
+    {
+        $request = Request::create('/', Request::METHOD_GET, ['get' => 'request']);
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(['get' => 'request'], $extractor->getData());
+    }
+
+    /**
+     * Test if extractor returns correct data from POST request.
+     */
+    public function testGetJsonDataFromPostRequest()
+    {
+        $request = Request::create('/', Request::METHOD_POST, [], [], [], [], '{"post":"request"}');
+        $request->headers->set('content-type', 'application/json');
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals('{"post":"request"}', $extractor->getData());
+    }
+
+    /**
+     * Test if extractor returns json data from PUT request.
+     */
+    public function testGetJsonDataFromPutRequest()
+    {
+        $request = Request::create('/', Request::METHOD_POST, [], [], [], [], '{"put":"request"}');
+        $request->headers->set('content-type', 'application/json');
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals('{"put":"request"}', $extractor->getData());
+    }
+
+    /**
+     * Test if extractor returns json data from PATCH request.
+     */
+    public function testGetJsonDataFromPatchRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PATCH, [], [], [], [], '{"patch":"request"}');
+        $request->headers->set('content-type', 'application/json');
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals('{"patch":"request"}', $extractor->getData());
+    }
+
+    /**
+     * Test if extractor returns form format from GET request.
+     */
+    public function testGetFormFormatFromGetRequest()
+    {
+        $request = Request::create('/', Request::METHOD_GET);
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(Formats::FORM, $extractor->getFormat());
+    }
+
+    /**
+     * Test if extractor returns form format from POST request.
+     */
+    public function testGetFormFormatFromPostRequest()
     {
         $request = Request::create('/', Request::METHOD_POST);
 
         $this->requestStack
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $this->assertNull($this->extractor->extractFormat());
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(Formats::FORM, $extractor->getFormat());
+    }
 
+    /**
+     * Test if extractor returns form format from PUT request.
+     */
+    public function testGetFormFormatFromPutRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PUT);
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(Formats::FORM, $extractor->getFormat());
+    }
+
+    /**
+     * Test if extractor returns json format from POST request.
+     */
+    public function testGetJsonFormatFromPostRequest()
+    {
+        $request = Request::create('/', Request::METHOD_POST);
         $request->headers->set('content-type', 'application/json');
 
-        $this->assertEquals('json', $this->extractor->extractFormat());
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(Formats::JSON, $extractor->getFormat());
+    }
+
+    /**
+     * Test if extractor returns json format from PUT request.
+     */
+    public function testGetJsonFormatFromPutRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PUT);
+        $request->headers->set('content-type', 'application/json');
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(Formats::JSON, $extractor->getFormat());
+    }
+
+    /**
+     * Test if extractor returns json format from PATCH request.
+     */
+    public function testGetJsonFormatFromPatchRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PATCH);
+        $request->headers->set('content-type', 'application/json');
+
+        $this->requestStack
+            ->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $extractor = new Extractor($this->requestStack);
+        $this->assertEquals(Formats::JSON, $extractor->getFormat());
     }
 }
