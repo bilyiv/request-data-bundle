@@ -50,7 +50,9 @@ class Mapper implements MapperInterface
         $object = new $class();
 
         foreach ($data as $propertyPath => $propertyValue) {
-            $this->propertyAccessor->setValue($object, $propertyPath, $propertyValue);
+            if ($this->propertyAccessor->isWritable($object, $propertyPath)) {
+                $this->propertyAccessor->setValue($object, $propertyPath, $propertyValue);
+            }
         }
 
         return $object;
