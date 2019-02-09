@@ -18,13 +18,6 @@ services:
 
     Bilyiv\RequestDataBundle\TypeConverter\TypeConverterInterface: '@request_data.type_converter'
 
-    request_data.normalizer.request_data:
-        class: 'Bilyiv\RequestDataBundle\Normalizer\RequestDataNormalizer'
-        arguments:
-            $prefix: ''
-        tags:
-            - {name: 'serializer.normalizer'}
-
     request_data.controller_listener:
         class: 'Bilyiv\RequestDataBundle\EventListener\ControllerListener'
         arguments:
