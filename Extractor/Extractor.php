@@ -28,15 +28,15 @@ class Extractor implements ExtractorInterface
     {
         $method = $request->getMethod();
 
-        if (Formats::FORM === $format) {
-            if (Request::METHOD_GET === $method) {
-                return $this->converter->convert($request->query->all());
-            }
-
-            return $request->files->all() + $request->request->all();
+        if (Request::METHOD_GET === $method) {
+            return $this->converter->convert($request->query->all());
         }
 
         if (Request::METHOD_POST === $method || Request::METHOD_PUT === $method || Request::METHOD_PATCH === $method) {
+            if (Formats::FORM === $format) {
+                return $request->files->all() + $request->request->all();
+            }
+
             return $request->getContent();
         }
 

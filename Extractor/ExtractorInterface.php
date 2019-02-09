@@ -13,7 +13,7 @@ interface ExtractorInterface
      * Extract data from the request.
      *
      * @param Request $request
-     * @param string $format
+     * @param string  $format
      *
      * @return mixed
      */
@@ -24,7 +24,7 @@ interface ExtractorInterface
      *
      * @param Request $request
      *
-     * @return null|string
+     * @return string|null
      */
     public function extractFormat(Request $request): ?string;
 
