@@ -38,12 +38,12 @@ class ControllerListenerTest extends TestCase
             ->getMock();
 
         $extractor
-            ->method('getFormat')
+            ->method('extractFormat')
             ->willReturn('form');
 
         $extractor
-            ->method('getData')
-            ->willReturn(["foo" => "bar"]);
+            ->method('extractData')
+            ->willReturn(['foo' => 'bar']);
 
         $mapper = $this->getMockBuilder(MapperInterface::class)
             ->disableOriginalConstructor()
