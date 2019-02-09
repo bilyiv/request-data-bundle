@@ -67,20 +67,22 @@ class ControllerListener
         foreach ($parameters as $parameter) {
             $class = $parameter->getClass();
 
-            if ($class && 0 === strpos($class->getName(), $this->prefix)) {
-                $format = $this->extractor->getFormat();
-                if (!$format) {
+            if (null !== $class && 0 === strpos($class->getName(), $this->prefix)) {
+                $request = $event->getRequest();
+
+                $format = $this->extractor->extractFormat($request);
+                if (null === $format) {
                     break;
                 }
 
-                $data = $this->extractor->getData();
+                $data = $this->extractor->extractData($request, $format);
                 if (!$data) {
                     break;
                 }
 
                 $requestData = $this->mapper->map($data, $format, $class->getName());
 
-                $event->getRequest()->attributes->set($parameter->getName(), $requestData);
+                $request->attributes->set($parameter->getName(), $requestData);
 
                 $this->dispatcher->dispatch(Events::FINISH, new FinishEvent($requestData));
 

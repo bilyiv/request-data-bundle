@@ -2,24 +2,31 @@
 
 namespace Bilyiv\RequestDataBundle\Extractor;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
  */
 interface ExtractorInterface
 {
     /**
-     * Detect and return data.
+     * Extract data from the request.
+     *
+     * @param Request $request
+     * @param string $format
      *
      * @return mixed
      */
-    public function getData();
+    public function extractData(Request $request, string $format);
 
     /**
-     * Detect and return format.
+     * Extract format from the request.
      *
-     * @return string|null
+     * @param Request $request
+     *
+     * @return null|string
      */
-    public function getFormat(): ?string;
+    public function extractFormat(Request $request): ?string;
 
     /**
      * Return supported formats.
