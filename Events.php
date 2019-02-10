@@ -8,7 +8,7 @@ namespace Bilyiv\RequestDataBundle;
 final class Events
 {
     /**
-     * The FINISH event occurs when a request data deserialization is finished.
+     * The FINISH event occurs when request data formation is finished.
      *
      * @Event("Bilyiv\RequestDataBundle\Event\FinishEvent")
      */
