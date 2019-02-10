@@ -6,7 +6,7 @@ This bundle allows you to represent request data in a structured and useful way 
 
 * Detecting how to extract data depends on request method and `Content-Type` header.
 * Representing and normalizing query parameters for the `GET` request method.
-* Representing `form`, `json` request body for the `POST`, `PUT`, `PATCH` request methods.
+* Representing `form`, `json`, `xml` request body for the `POST`, `PUT`, `PATCH` request methods.
 * Dispatching the finish event when request data is ready.
 
 ## Installation
@@ -71,15 +71,25 @@ class PostController extends AbstractController
 All the following requests will return the same response `{"title":"It works","author":"Vlad"}`:
 
 ```bash
-curl -X GET 'http://localhost?title=It+works&author=Vlad'
+curl -X GET 'http://localhost:8000?title=It+works&author=Vlad'
 ```
 
 ```bash
-curl -X POST 'http://localhost' -d 'title=It+works&author=Vlad'
+curl -X POST 'http://localhost:8000' \
+     -H 'Content-Type: application/x-www-form-urlencoded' \
+     -d 'title=It+works&author=Vlad'
 ```
 
 ```bash
-curl -X POST 'http://localhost' -H 'Content-Type: application/json' -d '{"title":"It works","author":"Vlad"}'
+curl -X POST 'http://localhost:8000' \
+     -H 'Content-Type: application/json' \
+     -d '{"title":"It works","author":"Vlad"}'
+```
+
+```bash
+curl -X POST 'http://localhost:8000' \
+     -H 'Content-Type: application/xml' \
+     -d '<post><title>It works</title><author>Vlad</author></post>'
 ```
 
 ## License
