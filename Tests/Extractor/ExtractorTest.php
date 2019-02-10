@@ -54,7 +54,7 @@ class ExtractorTest extends TestCase
     }
 
     /**
-     * Test if extractor returns correct data from POST request.
+     * Test if extractor returns json data from POST request.
      */
     public function testExtractJsonDataFromPostRequest()
     {
@@ -84,6 +84,39 @@ class ExtractorTest extends TestCase
         $request->headers->set('content-type', 'application/json');
 
         $this->assertEquals('{"patch":"request"}', $this->extractor->extractData($request, Formats::JSON));
+    }
+
+    /**
+     * Test if extractor returns xml data from POST request.
+     */
+    public function testExtractXmlDataFromPostRequest()
+    {
+        $request = Request::create('/', Request::METHOD_POST, [], [], [], [], '<request><post>request</post></request>');
+        $request->headers->set('content-type', 'application/xml');
+
+        $this->assertEquals('<request><post>request</post></request>', $this->extractor->extractData($request, Formats::XML));
+    }
+
+    /**
+     * Test if extractor returns xml data from PUT request.
+     */
+    public function testExtractXmlDataFromPutRequest()
+    {
+        $request = Request::create('/', Request::METHOD_POST, [], [], [], [], '<request><put>request</put></request>');
+        $request->headers->set('content-type', 'application/xml');
+
+        $this->assertEquals('<request><put>request</put></request>', $this->extractor->extractData($request, Formats::XML));
+    }
+
+    /**
+     * Test if extractor returns xml data from PATCH request.
+     */
+    public function testExtractXmlDataFromPatchRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PATCH, [], [], [], [], '<request><patch>request</patch></request>');
+        $request->headers->set('content-type', 'application/xml');
+
+        $this->assertEquals('<request><patch>request</patch></request>', $this->extractor->extractData($request, Formats::XML));
     }
 
     /**
@@ -147,5 +180,38 @@ class ExtractorTest extends TestCase
         $request->headers->set('content-type', 'application/json');
 
         $this->assertEquals(Formats::JSON, $this->extractor->extractFormat($request));
+    }
+
+    /**
+     * Test if extractor returns xml format from POST request.
+     */
+    public function testExtractXmlFormatFromPostRequest()
+    {
+        $request = Request::create('/', Request::METHOD_POST);
+        $request->headers->set('content-type', 'application/xml');
+
+        $this->assertEquals(Formats::XML, $this->extractor->extractFormat($request));
+    }
+
+    /**
+     * Test if extractor returns xml format from PUT request.
+     */
+    public function testExtractXmlFormatFromPutRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PUT);
+        $request->headers->set('content-type', 'application/xml');
+
+        $this->assertEquals(Formats::XML, $this->extractor->extractFormat($request));
+    }
+
+    /**
+     * Test if extractor returns xml format from PATCH request.
+     */
+    public function testExtractXmlFormatFromPatchRequest()
+    {
+        $request = Request::create('/', Request::METHOD_PATCH);
+        $request->headers->set('content-type', 'application/xml');
+
+        $this->assertEquals(Formats::XML, $this->extractor->extractFormat($request));
     }
 }

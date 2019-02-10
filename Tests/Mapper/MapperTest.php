@@ -68,4 +68,15 @@ class MapperTest extends TestCase
         $this->assertInstanceOf(TestRequestData::class, $requestData);
         $this->assertEquals('bar', $requestData->foo);
     }
+
+    /**
+     * Test if mapper maps xml data correctly.
+     */
+    public function testXmlDataMap()
+    {
+        $requestData = $this->mapper->map('<request><foo>bar</foo></request>', Formats::XML, TestRequestData::class);
+
+        $this->assertInstanceOf(TestRequestData::class, $requestData);
+        $this->assertEquals('bar', $requestData->foo);
+    }
 }

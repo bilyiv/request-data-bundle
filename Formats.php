@@ -9,5 +9,5 @@ class Formats
 {
     public const FORM = 'form';
     public const JSON = 'json';
-
+    public const XML = 'xml';
 }

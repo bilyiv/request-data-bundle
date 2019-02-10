@@ -66,6 +66,6 @@ class Extractor implements ExtractorInterface
      */
     public function getSupportedFormats(): array
     {
-        return [Formats::JSON, Formats::FORM];
+        return [Formats::FORM, Formats::JSON, Formats::XML];
     }
 }
