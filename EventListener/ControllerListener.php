@@ -58,7 +58,7 @@ class ControllerListener
             return;
         }
 
-        $controllerClass = (new \ReflectionClass($controller[0]));
+        $controllerClass = new \ReflectionClass($controller[0]);
         if ($controllerClass->isAbstract()) {
             return;
         }

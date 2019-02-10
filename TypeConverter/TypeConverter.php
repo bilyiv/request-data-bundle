@@ -12,11 +12,11 @@ class TypeConverter implements TypeConverterInterface
      */
     public function convert($value)
     {
-        if (\is_string($value)) {
+        if (is_string($value)) {
             $value = $this->convertString($value);
         }
 
-        if (\is_array($value)) {
+        if (is_array($value)) {
             $value = $this->convertArray($value);
         }
 
