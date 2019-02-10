@@ -12,5 +12,5 @@ final class Events
      *
      * @Event("Bilyiv\RequestDataBundle\Event\FinishEvent")
      */
-    const FINISH = 'request_data.finish';
+    public const FINISH = 'request_data.finish';
 }

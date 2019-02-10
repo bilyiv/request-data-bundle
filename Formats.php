@@ -7,6 +7,7 @@ namespace Bilyiv\RequestDataBundle;
  */
 class Formats
 {
-    const FORM = 'form';
-    const JSON = 'json';
+    public const FORM = 'form';
+    public const JSON = 'json';
+
 }
