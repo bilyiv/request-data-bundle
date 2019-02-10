@@ -10,6 +10,9 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    /**
+     * The DEFAULT_PREFIX defines the default request data namespace prefix.
+     */
     public const DEFAULT_PREFIX = 'App\\RequestData';
 
     /**
