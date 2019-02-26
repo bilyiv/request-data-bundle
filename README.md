@@ -7,6 +7,7 @@ This bundle allows you to represent request data in a structured and useful way 
 * Detecting how to extract data depends on request method and `Content-Type` header.
 * Representing and normalizing query parameters for the `GET` request method.
 * Representing `form`, `json`, `xml` request body for the `POST`, `PUT`, `PATCH` request methods.
+* Defining supported formats and throwing exception if the request format is unsupported.
 * Dispatching the finish event when request data is ready.
 
 ## Installation
