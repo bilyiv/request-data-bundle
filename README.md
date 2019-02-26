@@ -34,7 +34,7 @@ request_data:
 ```php
 namespace App\RequestData;
 
-class PostRequestData
+class PostRequestData implements FormatSupportableInterface
 {
     public const DEFAULT_AUTHOR = 'none';
 
@@ -47,6 +47,14 @@ class PostRequestData
      * @var string
      */
     public $author = self::DEFAULT_AUTHOR;
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getSupportedFormats(): array
+    {
+        return [Formats::FORM, Formats::JSON, Formats::XML];
+    }
 }
 ```
 
