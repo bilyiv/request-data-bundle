@@ -54,7 +54,7 @@ class Extractor implements ExtractorInterface
 
         $format = $request->getFormat($request->headers->get('content-type'));
 
-        if (!in_array($format, $this->getSupportedFormats())) {
+        if (!in_array($format, static::getSupportedFormats())) {
             return null;
         }
 
@@ -64,7 +64,7 @@ class Extractor implements ExtractorInterface
     /**
      * {@inheritdoc}
      */
-    public function getSupportedFormats(): array
+    public static function getSupportedFormats(): array
     {
         return [Formats::FORM, Formats::JSON, Formats::XML];
     }

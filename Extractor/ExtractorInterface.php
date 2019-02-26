@@ -2,12 +2,13 @@
 
 namespace Bilyiv\RequestDataBundle\Extractor;
 
+use Bilyiv\RequestDataBundle\FormatSupportableInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Vladyslav Bilyi <beliyvladislav@gmail.com>
  */
-interface ExtractorInterface
+interface ExtractorInterface extends FormatSupportableInterface
 {
     /**
      * Extract data from the request.
@@ -27,11 +28,4 @@ interface ExtractorInterface
      * @return string|null
      */
     public function extractFormat(Request $request): ?string;
-
-    /**
-     * Return supported formats.
-     *
-     * @return array
-     */
-    public function getSupportedFormats(): array;
 }
