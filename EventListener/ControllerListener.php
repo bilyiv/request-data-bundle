@@ -4,7 +4,9 @@ namespace Bilyiv\RequestDataBundle\EventListener;
 
 use Bilyiv\RequestDataBundle\Event\FinishEvent;
 use Bilyiv\RequestDataBundle\Events;
+use Bilyiv\RequestDataBundle\Exception\NotSupportedFormatException;
 use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
+use Bilyiv\RequestDataBundle\FormatSupportableInterface;
 use Bilyiv\RequestDataBundle\Mapper\MapperInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -49,6 +51,7 @@ class ControllerListener
     /**
      * @param FilterControllerEvent $event
      *
+     * @throws NotSupportedFormatException
      * @throws \ReflectionException
      */
     public function onKernelController(FilterControllerEvent $event)
@@ -71,8 +74,9 @@ class ControllerListener
                 $request = $event->getRequest();
 
                 $format = $this->extractor->extractFormat($request);
-                if (null === $format) {
-                    break;
+                $formatSupportable = $class->implementsInterface(FormatSupportableInterface::class);
+                if (!$format || ($formatSupportable && !in_array($format, $class->getName()::getSupportedFormats()))) {
+                    throw new NotSupportedFormatException();
                 }
 
                 $data = $this->extractor->extractData($request, $format);
