@@ -77,28 +77,51 @@ class PostController extends AbstractController
 
 #### Make requests
 
-All the following requests will return the same response `{"title":"It works","author":"Vlad"}`:
+All the following requests will return the same json response:
 
-```bash
-curl -X GET 'http://localhost:8000?title=It+works&author=Vlad'
+```json
+{
+    "title": "Hamlet",
+    "author": "William Shakespeare"
+}
 ```
 
+`GET` request:
+
 ```bash
-curl -X POST 'http://localhost:8000' \
+curl -X GET 'https://example.com?title=Hamlet&author=William+Shakespeare'
+```
+
+`POST` form request:
+
+```bash
+curl -X POST 'https://example.com' \
      -H 'Content-Type: application/x-www-form-urlencoded' \
-     -d 'title=It+works&author=Vlad'
+     -d 'title=Hamlet&author=William+Shakespeare'
 ```
 
+`POST` json request:
+
 ```bash
-curl -X POST 'http://localhost:8000' \
+curl -X POST 'https://example.com' \
      -H 'Content-Type: application/json' \
-     -d '{"title":"It works","author":"Vlad"}'
+     -d '{"title":"Hamlet","author":"William Shakespeare"}'
 ```
 
+`POST` xml request:
+
 ```bash
-curl -X POST 'http://localhost:8000' \
+curl -X POST 'https://example.com' \
      -H 'Content-Type: application/xml' \
-     -d '<post><title>It works</title><author>Vlad</author></post>'
+     -d '<post><title>Hamlet</title><author>William Shakespeare</author></post>'
+```
+
+`POST` csv request throws an exception because of unsupported format:
+
+```bash
+curl -X POST 'https://example.com' \
+     -H 'Content-Type: application/csv' \
+     -d 'Hamlet,William Shakespeare'
 ```
 
 ## License
