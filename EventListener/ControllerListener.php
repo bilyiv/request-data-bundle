@@ -57,7 +57,7 @@ class ControllerListener
     public function onKernelController(FilterControllerEvent $event)
     {
         $controller = $event->getController();
-        if (!is_array($controller)) {
+        if (!\is_array($controller)) {
             return;
         }
 
@@ -70,12 +70,12 @@ class ControllerListener
         foreach ($parameters as $parameter) {
             $class = $parameter->getClass();
 
-            if (null !== $class && 0 === strpos($class->getName(), $this->prefix)) {
+            if (null !== $class && 0 === \strpos($class->getName(), $this->prefix)) {
                 $request = $event->getRequest();
 
                 $format = $this->extractor->extractFormat($request);
                 $formatSupportable = $class->implementsInterface(FormatSupportableInterface::class);
-                if (!$format || ($formatSupportable && !in_array($format, $class->getName()::getSupportedFormats()))) {
+                if (!$format || ($formatSupportable && !\in_array($format, $class->getName()::getSupportedFormats()))) {
                     throw new NotSupportedFormatException();
                 }
 

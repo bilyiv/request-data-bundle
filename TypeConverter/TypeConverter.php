@@ -12,11 +12,11 @@ class TypeConverter implements TypeConverterInterface
      */
     public function convert($value)
     {
-        if (is_string($value)) {
+        if (\is_string($value)) {
             $value = $this->convertString($value);
         }
 
-        if (is_array($value)) {
+        if (\is_array($value)) {
             $value = $this->convertArray($value);
         }
 
@@ -53,10 +53,10 @@ class TypeConverter implements TypeConverterInterface
         if ('false' === $value) {
             return false;
         }
-        if (preg_match('/^-?\d+$/', $value)) {
+        if (\preg_match('/^-?\d+$/', $value)) {
             return (int) $value;
         }
-        if (preg_match('/^-?\d+(\.\d+)?$/', $value)) {
+        if (\preg_match('/^-?\d+(\.\d+)?$/', $value)) {
             return (float) $value;
         }
 

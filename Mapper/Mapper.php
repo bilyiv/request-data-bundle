@@ -32,7 +32,7 @@ class Mapper implements MapperInterface
      */
     public function map($data, string $format, string $class): object
     {
-        if (Formats::FORM === $format && is_array($data)) {
+        if (Formats::FORM === $format && \is_array($data)) {
             return $this->mapFormFormat($data, $class);
         }
 

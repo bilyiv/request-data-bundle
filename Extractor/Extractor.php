@@ -54,7 +54,7 @@ class Extractor implements ExtractorInterface
 
         $format = $request->getFormat($request->headers->get('content-type'));
 
-        if (!in_array($format, static::getSupportedFormats())) {
+        if (!\in_array($format, static::getSupportedFormats())) {
             return null;
         }
 
