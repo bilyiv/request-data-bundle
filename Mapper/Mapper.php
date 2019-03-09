@@ -2,7 +2,11 @@
 
 namespace Bilyiv\RequestDataBundle\Mapper;
 
+use Bilyiv\RequestDataBundle\Exception\NotSupportedFormatException;
+use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
 use Bilyiv\RequestDataBundle\Formats;
+use Bilyiv\RequestDataBundle\FormatSupportableInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -11,6 +15,11 @@ use Symfony\Component\Serializer\SerializerInterface;
  */
 class Mapper implements MapperInterface
 {
+    /**
+     * @var ExtractorInterface
+     */
+    private $extractor;
+
     /**
      * @var SerializerInterface
      */
@@ -21,8 +30,12 @@ class Mapper implements MapperInterface
      */
     private $propertyAccessor;
 
-    public function __construct(SerializerInterface $serializer, PropertyAccessorInterface $propertyAccessor)
-    {
+    public function __construct(
+        ExtractorInterface $extractor,
+        SerializerInterface $serializer,
+        PropertyAccessorInterface $propertyAccessor
+    ) {
+        $this->extractor = $extractor;
         $this->serializer = $serializer;
         $this->propertyAccessor = $propertyAccessor;
     }
@@ -30,31 +43,36 @@ class Mapper implements MapperInterface
     /**
      * {@inheritdoc}
      */
-    public function map($data, string $format, string $class): object
+    public function map(Request $request, object $object): void
     {
-        if (Formats::FORM === $format && \is_array($data)) {
-            return $this->mapFormFormat($data, $class);
+        $format = $this->extractor->extractFormat($request);
+        $formatSupportable = $object instanceof FormatSupportableInterface;
+        if (!$format || ($formatSupportable && !\in_array($format, $object::getSupportedFormats()))) {
+            throw new NotSupportedFormatException();
         }
 
-        return $this->serializer->deserialize($data, $class, $format);
+        $data = $this->extractor->extractData($request, $format);
+        if (!$data) {
+            return;
+        }
+
+        if (Formats::FORM === $format && \is_array($data)) {
+            $this->mapForm($data, $object);
+        }
+
+        $this->serializer->deserialize($data, \get_class($object), $format, ['object_to_populate' => $object]);
     }
 
     /**
      * @param array  $data
-     * @param string $class
-     *
-     * @return object
+     * @param object $object
      */
-    protected function mapFormFormat(array $data, string $class): object
+    protected function mapForm(array $data, object $object): void
     {
-        $object = new $class();
-
         foreach ($data as $propertyPath => $propertyValue) {
             if ($this->propertyAccessor->isWritable($object, $propertyPath)) {
                 $this->propertyAccessor->setValue($object, $propertyPath, $propertyValue);
             }
         }
-
-        return $object;
     }
 }

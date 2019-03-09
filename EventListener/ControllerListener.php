@@ -5,8 +5,6 @@ namespace Bilyiv\RequestDataBundle\EventListener;
 use Bilyiv\RequestDataBundle\Event\FinishEvent;
 use Bilyiv\RequestDataBundle\Events;
 use Bilyiv\RequestDataBundle\Exception\NotSupportedFormatException;
-use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
-use Bilyiv\RequestDataBundle\FormatSupportableInterface;
 use Bilyiv\RequestDataBundle\Mapper\MapperInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -17,34 +15,24 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 class ControllerListener
 {
     /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
-
-    /**
-     * @var ExtractorInterface
-     */
-    private $extractor;
-
-    /**
      * @var MapperInterface
      */
     private $mapper;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
 
     /**
      * @var string
      */
     private $prefix;
 
-    public function __construct(
-        EventDispatcherInterface $dispatcher,
-        ExtractorInterface $extractor,
-        MapperInterface $mapper,
-        string $prefix
-    ) {
-        $this->dispatcher = $dispatcher;
-        $this->extractor = $extractor;
+    public function __construct(MapperInterface $mapper, EventDispatcherInterface $dispatcher, string $prefix)
+    {
         $this->mapper = $mapper;
+        $this->dispatcher = $dispatcher;
         $this->prefix = $prefix;
     }
 
@@ -73,22 +61,13 @@ class ControllerListener
             if (null !== $class && 0 === \strpos($class->getName(), $this->prefix)) {
                 $request = $event->getRequest();
 
-                $format = $this->extractor->extractFormat($request);
-                $formatSupportable = $class->implementsInterface(FormatSupportableInterface::class);
-                if (!$format || ($formatSupportable && !\in_array($format, $class->getName()::getSupportedFormats()))) {
-                    throw new NotSupportedFormatException();
-                }
+                $object = $class->newInstance();
 
-                $data = $this->extractor->extractData($request, $format);
-                if (!$data) {
-                    break;
-                }
+                $this->mapper->map($request, $object);
 
-                $requestData = $this->mapper->map($data, $format, $class->getName());
+                $request->attributes->set($parameter->getName(), $object);
 
-                $request->attributes->set($parameter->getName(), $requestData);
-
-                $this->dispatcher->dispatch(Events::FINISH, new FinishEvent($requestData));
+                $this->dispatcher->dispatch(Events::FINISH, new FinishEvent($object));
 
                 break;
             }
