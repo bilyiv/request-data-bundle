@@ -86,6 +86,11 @@ class MapperTest extends TestCase
             ->method('extractData')
             ->willReturn(['foo' => 'bar']);
 
+        $this->serializer
+            ->expects($this->never())
+            ->method('deserialize')
+            ->willReturn(null);
+
         $requestData = new TestRequestData();
 
         $this->mapper->map(new Request(), $requestData);

@@ -58,6 +58,7 @@ class Mapper implements MapperInterface
 
         if (Formats::FORM === $format && \is_array($data)) {
             $this->mapForm($data, $object);
+            return;
         }
 
         $this->serializer->deserialize($data, \get_class($object), $format, ['object_to_populate' => $object]);
