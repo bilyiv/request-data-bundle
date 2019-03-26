@@ -2,11 +2,16 @@
 
 namespace Bilyiv\RequestDataBundle\Tests\Extractor;
 
+use Bilyiv\RequestDataBundle\Exception\NotSupportedFormatException;
+use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
 use Bilyiv\RequestDataBundle\Formats;
 use Bilyiv\RequestDataBundle\Mapper\Mapper;
 use Bilyiv\RequestDataBundle\Mapper\MapperInterface;
+use Bilyiv\RequestDataBundle\Tests\Fixtures\TestFormatSupportableRequestData;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestData;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -16,7 +21,17 @@ use Symfony\Component\Serializer\SerializerInterface;
 class MapperTest extends TestCase
 {
     /**
-     * @var MapperInterface
+     * @var ExtractorInterface|MockObject
+     */
+    private $extractor;
+
+    /**
+     * @var SerializerInterface|MockObject
+     */
+    private $serializer;
+
+    /**
+     * @var MapperInterface|MockObject
      */
     private $mapper;
 
@@ -25,22 +40,19 @@ class MapperTest extends TestCase
      */
     public function setUp()
     {
-        $serializer = $this->getMockBuilder(SerializerInterface::class)
+        $this->extractor = $this->getMockBuilder(ExtractorInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $requestData = new TestRequestData();
-        $requestData->foo = 'bar';
+        $this->serializer = $this->getMockBuilder(SerializerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $serializer
-            ->method('deserialize')
-            ->willReturn($requestData);
-
-        $this->mapper = new Mapper($serializer, new PropertyAccessor());
+        $this->mapper = new Mapper($this->extractor, $this->serializer, new PropertyAccessor());
     }
 
     /**
-     * Test if mapper implements necessary interface.
+     * Test if mapper implements necessary interfaces.
      */
     public function testInterface()
     {
@@ -48,35 +60,57 @@ class MapperTest extends TestCase
     }
 
     /**
-     * Test if mapper maps form data correctly.
+     * Tests if mapper throws unsupported format exception.
      */
-    public function testFormDataMap()
+    public function testUnsupportedRequestFormatException()
     {
-        $requestData = $this->mapper->map(['foo' => 'bar'], Formats::FORM, TestRequestData::class);
+        $this->extractor
+            ->method('extractFormat')
+            ->willReturn(Formats::FORM);
 
-        $this->assertInstanceOf(TestRequestData::class, $requestData);
+        $this->expectException(NotSupportedFormatException::class);
+
+        $this->mapper->map(new Request(), new TestFormatSupportableRequestData());
+    }
+
+    /**
+     * Test if mapper handles form requests correctly.
+     */
+    public function testFormRequestMapping()
+    {
+        $this->extractor
+            ->method('extractFormat')
+            ->willReturn(Formats::FORM);
+
+        $this->extractor
+            ->method('extractData')
+            ->willReturn(['foo' => 'bar']);
+
+        $requestData = new TestRequestData();
+
+        $this->mapper->map(new Request(), $requestData);
+
         $this->assertEquals('bar', $requestData->foo);
     }
 
     /**
-     * Test if mapper maps json data correctly.
+     * Test if mapper handles not form requests correctly.
      */
-    public function testJsonDataMap()
+    public function testNotFormRequestMapping()
     {
-        $requestData = $this->mapper->map('{"foo":"bar"}', Formats::JSON, TestRequestData::class);
+        $this->extractor
+            ->method('extractFormat')
+            ->willReturn(Formats::JSON);
 
-        $this->assertInstanceOf(TestRequestData::class, $requestData);
-        $this->assertEquals('bar', $requestData->foo);
-    }
+        $this->extractor
+            ->method('extractData')
+            ->willReturn('{"foo":"bar"}');
 
-    /**
-     * Test if mapper maps xml data correctly.
-     */
-    public function testXmlDataMap()
-    {
-        $requestData = $this->mapper->map('<request><foo>bar</foo></request>', Formats::XML, TestRequestData::class);
+        $this->serializer
+            ->expects($this->once())
+            ->method('deserialize')
+            ->willReturn(null);
 
-        $this->assertInstanceOf(TestRequestData::class, $requestData);
-        $this->assertEquals('bar', $requestData->foo);
+        $this->mapper->map(new Request(), new TestRequestData());
     }
 }
