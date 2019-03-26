@@ -3,12 +3,9 @@
 namespace Bilyiv\RequestDataBundle\Tests\EventListener;
 
 use Bilyiv\RequestDataBundle\EventListener\ControllerListener;
-use Bilyiv\RequestDataBundle\Exception\NotSupportedFormatException;
-use Bilyiv\RequestDataBundle\Extractor\ExtractorInterface;
 use Bilyiv\RequestDataBundle\Mapper\MapperInterface;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestAbstractController;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestController;
-use Bilyiv\RequestDataBundle\Tests\Fixtures\TestFormatSupportableRequestDataController;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestData;
 use Bilyiv\RequestDataBundle\Tests\Fixtures\TestRequestDataController;
 use PHPUnit\Framework\TestCase;
@@ -31,37 +28,23 @@ class ControllerListenerTest extends TestCase
      */
     public function setUp()
     {
-        $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $extractor = $this->getMockBuilder(ExtractorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $extractor
-            ->method('extractFormat')
-            ->willReturn('form');
-
-        $extractor
-            ->method('extractData')
-            ->willReturn(['foo' => 'bar']);
-
         $mapper = $this->getMockBuilder(MapperInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $requestData = new TestRequestData();
-        $requestData->foo = 'bar';
-
         $mapper
             ->method('map')
-            ->willReturn($requestData);
+            ->willReturnCallback(function (Request $request, object $object) {
+                $object->foo = 'bar';
+            });
+
+        $dispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->controllerListener = new ControllerListener(
-            $dispatcher,
-            $extractor,
             $mapper,
+            $dispatcher,
             'Bilyiv\RequestDataBundle\Tests\Fixtures'
         );
     }
@@ -162,31 +145,5 @@ class ControllerListenerTest extends TestCase
         $this->assertEquals(1, $request->attributes->count());
         $this->assertInstanceOf(TestRequestData::class, $request->attributes->get('data'));
         $this->assertEquals('bar', $request->attributes->get('data')->foo);
-    }
-
-    /**
-     * Tests if listener do nothing when there is a controller with injected format supportable request data class.
-     */
-    public function testOnKernelControllerWithInjectedFormatSupportableRequestData()
-    {
-        $request = new Request();
-
-        $filterControllerEvent = $this->getMockBuilder(FilterControllerEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $filterControllerEvent
-            ->expects($this->once())
-            ->method('getController')
-            ->willReturn([TestFormatSupportableRequestDataController::class, 'index']);
-
-        $filterControllerEvent
-            ->expects($this->once())
-            ->method('getRequest')
-            ->willReturn($request);
-
-        $this->expectException(NotSupportedFormatException::class);
-
-        $this->controllerListener->onKernelController($filterControllerEvent);
     }
 }
